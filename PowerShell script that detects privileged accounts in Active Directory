@@ -1,0 +1,11 @@
+# Define the distinguished name of the domain or organizational unit to search
+$dn = "DC=mydomain,DC=com"
+
+# Define the search filter to find privileged accounts (e.g. members of the Domain Admins or Enterprise Admins groups)
+$filter = "(|(memberof=CN=Domain Admins,$dn)(memberof=CN=Enterprise Admins,$dn))"
+
+# Search for privileged accounts in the specified domain or organizational unit
+Get-ADUser -Filter $filter -SearchBase $dn -Properties MemberOf |
+Select-Object Name, SamAccountName, MemberOf |
+Sort-Object Name |
+Format-Table
