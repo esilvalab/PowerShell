@@ -1,0 +1,20 @@
+# Define the domain to search
+$domainName = "mydomain.com"
+
+# Get all domain computers
+$computers = Get-ADComputer -Filter * -SearchBase "DC=$domainName" | Select-Object -ExpandProperty Name
+
+# Define an array to hold the results
+$results = @()
+
+# Loop through each computer and search for local accounts
+foreach ($computerName in $computers) {
+    $accounts = Get-WmiObject -Class Win32_UserAccount -ComputerName $computerName |
+    Where-Object { $_.LocalAccount -eq $true } |
+    Select-Object @{Name='ComputerName';Expression={$computerName}}, Name, Caption, AccountType
+
+    $results += $accounts
+}
+
+# Display the results
+$results | Sort-Object ComputerName, Name | Format-Table
