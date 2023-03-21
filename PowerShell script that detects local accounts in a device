@@ -1,0 +1,9 @@
+# Define the name of the computer to search
+$computerName = $env:COMPUTERNAME
+
+# Search for local accounts on the specified computer
+Get-WmiObject -Class Win32_UserAccount -ComputerName $computerName |
+Where-Object { $_.LocalAccount -eq $true } |
+Select-Object Name, Caption, AccountType |
+Sort-Object Name |
+Format-Table
